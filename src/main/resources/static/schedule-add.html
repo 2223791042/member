@@ -31,15 +31,15 @@
         <form id="scheduleForm">
             <div class="form-group">
                 <label for="scheduleName">日程名称</label>
-                <input type="text" class="form-control" id="scheduleName" placeholder="请输入名称" required>
+                <input type="text" name="scheduleName" class="form-control" id="scheduleName" placeholder="请输入名称" required>
             </div>
             <div class="form-group">
                 <label for="scheduleAddr">日程地点</label>
-                <input type="text" class="form-control" id="scheduleAddr" placeholder="请输入地点" required>
+                <input type="text" name="scheduleAddr" class="form-control" id="scheduleAddr" placeholder="请输入地点" required>
             </div>
             <div class="form-group">
                 <label for="scheduleTime">日程时间</label>
-                <input type="text" class="form-control" id="scheduleTime" placeholder="请输入时间" required>
+                <input type="text" name="scheduleTime" class="form-control" id="scheduleTime" placeholder="请输入时间" required>
             </div>
             <span class="btn btn-success" onclick="submit()">
                 <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
@@ -50,6 +50,7 @@
     <script src="js/global.js"></script>
     <script>
         function checkScheduleName(){
+            var flag = true;
             $.ajax({
                 async: false,
                 type: "get",
@@ -57,11 +58,11 @@
                 dataType: "json",
                 success: function (result) {
                     if (result.code == 404){
-                        return false;
+                        flag = false;
                     }
-                    return true;
                 }
             });
+            return flag;
         }
         function submit() {
             if (checkScheduleName()){
@@ -77,10 +78,16 @@
                 success: function (result) {
                     if (result.code == 200){
                         alert("添加成功!");
+                        clearInput();
                     }else {
                         alert("添加失败!");
                     }
                 }
+            });
+        }
+        function clearInput() {
+            $("input[type='text']").each(function (index, obj) {
+               $(obj).val("");
             });
         }
     </script>

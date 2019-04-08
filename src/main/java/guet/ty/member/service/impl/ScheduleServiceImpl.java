@@ -39,4 +39,21 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.setScheduleStatus(ScheduleEnum.UNFINISHED.getScheduleStatus());
         scheduleMapper.insertSelective(schedule);
     }
+
+    @Override
+    public Schedule getSchedule(Long scheduleId) {
+        return scheduleMapper.selectByPrimaryKey(scheduleId);
+    }
+
+    @Transactional
+    @Override
+    public void editSchedule(Schedule schedule) {
+        scheduleMapper.updateByPrimaryKeySelective(schedule);
+    }
+
+    @Transactional
+    @Override
+    public void delSchedule(Long scheduleId) {
+        scheduleMapper.deleteByPrimaryKey(scheduleId);
+    }
 }

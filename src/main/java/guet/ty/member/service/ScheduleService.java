@@ -10,4 +10,10 @@ public interface ScheduleService {
     Schedule getSchedule(String scheduleName);
 
     void saveSchedule(Schedule schedule);
+
+    Schedule getSchedule(Long scheduleId);
+
+    void editSchedule(Schedule schedule);
+
+    void delSchedule(Long scheduleId);
 }

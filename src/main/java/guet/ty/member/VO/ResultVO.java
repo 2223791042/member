@@ -2,6 +2,10 @@ package guet.ty.member.VO;
 
 import lombok.Data;
 
+/**
+ * 接口返回状态内容
+ * @param <T>
+ */
 @Data
 public class ResultVO<T> {
 

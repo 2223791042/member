@@ -39,7 +39,7 @@
         </javaClientGenerator>
 
         <!-- 指定Table的生成策略 -->
-        <table tableName="user" domainObjectName="User"></table>
+        <table tableName="schedule" domainObjectName="Schedule"></table>
 
     </context>
 </generatorConfiguration>

@@ -100,7 +100,7 @@ public class ScheduleController {
     }
 
     /**
-     * 删除指定日程
+     * 删除指定id日程
      * @param scheduleId 日程id
      * @return 删除与否
      */

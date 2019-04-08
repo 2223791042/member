@@ -7,8 +7,12 @@
     <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css">
     <style>
+        #choice{
+            margin-left: 18%;
+            margin-bottom: 30px;
+        }
         #content{
-            margin-top: 150px;
+            margin-top: 100px;
         }
         #schedule{
             margin: 0 auto;
@@ -22,6 +26,12 @@
 </head>
 <body>
     <div id="content">
+    <div id="choice">
+        <button type="button" onclick="location.href='schedule-add.html'" class="btn btn-success">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            添加日程
+        </button>
+    </div>
     <table class="table table-striped" id="schedule">
         <thead>
             <tr>

@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum ResultEnum {
 
     SUCCESS("成功", 200),
+    FOUND("找到了", 201),
     NOT_FOUND("未找到", 404),
     FAIL("服务器出错", 500);
 

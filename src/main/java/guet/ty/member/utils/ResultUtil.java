@@ -37,4 +37,20 @@ public class ResultUtil {
         return fail("失败");
     }
 
+    public static ResultVO found(){
+        ResultVO resultVO = new ResultVO();
+        resultVO.setCode(ResultEnum.FOUND.getCode());
+        resultVO.setMsg(ResultEnum.FOUND.getDesc());
+        resultVO.setData(null);
+        return resultVO;
+    }
+
+    public static ResultVO notFound(){
+        ResultVO resultVO = new ResultVO();
+        resultVO.setCode(ResultEnum.NOT_FOUND.getCode());
+        resultVO.setMsg(ResultEnum.NOT_FOUND.getDesc());
+        resultVO.setData(null);
+        return resultVO;
+    }
+
 }

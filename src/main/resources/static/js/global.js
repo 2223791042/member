@@ -1,1 +1,1 @@
-rootPath = "http://localhost:8080/member";
+rootPath = "http://domla.xyz:8080/member";

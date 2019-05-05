@@ -3,7 +3,7 @@ package guet.ty.member.utils;
 import guet.ty.member.VO.ResultVO;
 import guet.ty.member.enums.ResultEnum;
 
-public class ResultUtil {
+public class ResultVOUtil {
 
     public static ResultVO success(String msg, Object data){
         ResultVO resultVO = new ResultVO();

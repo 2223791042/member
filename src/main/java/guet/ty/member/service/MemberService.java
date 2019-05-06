@@ -13,4 +13,6 @@ public interface MemberService {
     Member getMember(Long memberId);
 
     void editMemeber(Member member);
+
+    Member getMember(String memberPhone);
 }

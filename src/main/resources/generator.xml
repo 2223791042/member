@@ -39,7 +39,9 @@
         </javaClientGenerator>
 
         <!-- 指定Table的生成策略 -->
+        <table tableName="member" domainObjectName="Member"></table>
         <table tableName="card" domainObjectName="Card"></table>
+        <table tableName="manager" domainObjectName="Manager"></table>
 
     </context>
 </generatorConfiguration>

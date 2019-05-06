@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +28,16 @@ public class MemberController {
     @Autowired
     private CardService cardService;
 
+    @GetMapping("/memberExist/{memberPhone}")
+    public ResultVO memberExist(@PathVariable("memberPhone")String memberPhone){
+        //查询是否存在
+        Member saveMember = memberService.getMember(memberPhone);
+        if (saveMember != null){
+            return ResultVOUtil.found();
+        }
+        return ResultVOUtil.notFound();
+    }
+
     @PostMapping("/member")
     public ResultVO memberAdd(Member member, HttpSession httpSession){
         //获取当前管理员信息
@@ -37,19 +48,20 @@ public class MemberController {
         Card card = new Card();
         card.setCardId(member.getMemberPhone());//设置卡的Id
         card.setCardGrade(member.getMemberGrade());//设置卡的等级
-        card.setCardBalance(0f);//设置卡的余额
-        card.setCardPoints(0);//设置卡的积分
+        card.setCardBalance(BigDecimal.ZERO);//设置卡的余额
+        card.setCardPoints(BigDecimal.ZERO);//设置卡的积分
         card.setCardCreateTime(new Date());//设置开卡时间
         card.setCardPayTimes(0);//设置总消费次数
-        card.setCardPayMoney(0f);//设置总消费金额
+        card.setCardPayMoney(BigDecimal.ZERO);//设置总消费金额
         card.setCardChargeTimes(0);//设置总充值次数
-        card.setCardChargeMomey(0f);//设置总充值金额
+        card.setCardChargeMomey(BigDecimal.ZERO);//设置总充值金额
         //保存
         try {
             memberService.saveMember(member);
             cardService.saveCard(card);
             return ResultVOUtil.success();
         }catch (Exception e){
+            e.printStackTrace();
             return ResultVOUtil.fail();
         }
     }
@@ -72,6 +84,7 @@ public class MemberController {
             }
             if (request.getParameter("endTime") != null){
                 endTime = simpleDateFormat.parse(request.getParameter("endTime"));
+                endTime = new Date(endTime.getTime()+86400000-1);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -108,5 +121,11 @@ public class MemberController {
         }catch (Exception e){
             return ResultVOUtil.fail();
         }
+    }
+
+    @GetMapping("/member/{memberId}")
+    public ResultVO memberEdit(@PathVariable("memberId")Long memberId){
+        Member member = memberService.getMember(memberId);
+        return ResultVOUtil.success("会员信息", member);
     }
 }

@@ -38,16 +38,16 @@ public class ManagerController {
         }
         //保存登录时间
         httpSession.setAttribute("loginTime", new Date());
-        //保存用户信息
+        //保存管理员信息
         httpSession.setAttribute("manager", saveManager);
         return ResultVOUtil.success();
     }
 
     @GetMapping("/logout")
     public ResultVO logout(HttpSession httpSession){
-        //获取用户登录信息
+        //获取管理员登录信息
         Manager manager = (Manager) httpSession.getAttribute("manager");
-        //获取用户登录时间
+        //获取管理员登录时间
         Date loginTime = (Date) httpSession.getAttribute("loginTime");
         //修改上次登录时间
         manager.setManagerLastTime(loginTime);
@@ -60,5 +60,12 @@ public class ManagerController {
         }catch (Exception e){
             return ResultVOUtil.fail();
         }
+    }
+
+    @GetMapping("/info")
+    public ResultVO info(HttpSession httpSession){
+        //获取管理员登录信息
+        Manager manager = (Manager) httpSession.getAttribute("manager");
+        return ResultVOUtil.success("管理员信息", manager);
     }
 }

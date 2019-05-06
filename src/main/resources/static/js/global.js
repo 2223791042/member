@@ -1,1 +1,0 @@
-rootPath = "http://domla.xyz:8080/member";

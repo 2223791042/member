@@ -55,4 +55,17 @@ public class MemberServiceImpl implements MemberService {
     public void editMemeber(Member member) {
         memberMapper.updateByPrimaryKeySelective(member);
     }
+
+    @Transactional
+    @Override
+    public Member getMember(String memberPhone) {
+        MemberExample example = new MemberExample();
+        MemberExample.Criteria criteria = example.createCriteria();
+        criteria.andMemberPhoneEqualTo(memberPhone);
+        List<Member> memberList = memberMapper.selectByExample(example);
+        if (memberList.size() != 0){
+            return memberList.get(0);
+        }
+        return null;
+    }
 }

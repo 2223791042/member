@@ -11,6 +11,7 @@ public class MemberApplicationTests {
 
     @Test
     public void contextLoads() {
+
     }
 
 }

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+        <!-- 本地引用jq -->
+        <script src="../plugin/jquery-2.1.4/jquery.min.js"></script>
+
+        <!-- 本地引用bootstrap -->
+        <script src="../plugin/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="../plugin/bootstrap-3.3.7-dist/css/bootstrap.min.css"
+        />
+
+        <!-- 本地引用自定义js模块 -->
+        <script src="../plugin/sb-admin-2/sb-admin-2.js"></script>
+        <link rel="stylesheet" href="../plugin/sb-admin-2/sb-admin-2.css" />
+    </head>
+    <body>
+        <!-- 添加消费记录页面 -->
+        <div class="row" style="margin-top: 50px;">
+            <div class="col-lg-4"></div>
+            <form class="col-lg-4" action="">
+                <div class="form-group">
+                    <label>会员姓名</label>
+                    <input class="form-control" placeholder="会员姓名" />
+                </div>
+                <div class="form-group">
+                    <label>会员卡ID</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        placeholder="会员卡ID"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>消费类型</label>
+                    <div class="radio">
+                        <label>
+                            <input
+                                type="radio"
+                                name="payKind"
+                                id="accommodation"
+                                value="0"
+                                checked
+                            />住宿
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="payKind"
+                                id="goods"
+                                value="1"
+                            />商品
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="payKind"
+                                id="services"
+                                value="2"
+                            />服务
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>消费金额</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        placeholder="消费金额"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>支付方式</label>
+                    <input class="form-control" placeholder="支付方式" />
+                </div>
+                <div class="form-group">
+                    <label>消费描述</label>
+                    <input class="form-control" placeholder="消费描述" />
+                </div>
+                <div class="form-group">
+                    <label>备注信息</label>
+                    <input class="form-control" placeholder="备注信息" />
+                </div>
+                <button type="button" class="btn btn-default">重置</button>
+                <button type="button" class="btn btn-success">保存</button>
+            </form>
+            <div class="col-lg-4"></div>
+        </div>
+    </body>
+</html>

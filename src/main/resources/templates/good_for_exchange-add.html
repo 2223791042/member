@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+        <!-- 本地引用jq -->
+        <script src="../plugin/jquery-2.1.4/jquery.min.js"></script>
+
+        <!-- 本地引用bootstrap -->
+        <script src="../plugin/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="../plugin/bootstrap-3.3.7-dist/css/bootstrap.min.css"
+        />
+
+        <!-- 本地引用自定义js模块 -->
+        <script src="../plugin/sb-admin-2/sb-admin-2.js"></script>
+        <link rel="stylesheet" href="../plugin/sb-admin-2/sb-admin-2.css" />
+
+        <!-- 本地引用Font Awesome字体图标 -->
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="../plugin/font-awesome/css/font-awesome.min.css"
+        />
+    </head>
+
+    <body>
+        <!-- 添加会员页面 -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">添加可兑换商品</h1>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 30px;">
+            <div class="col-lg-4"></div>
+            <form class="col-lg-4" id="addGoods">
+                <div class="form-group">
+                    <label>商品名称</label>
+                    <input
+                        id="goodsName"
+                        class="form-control"
+                        placeholder="商品名称"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>商品图片</label>
+                    <div class="preview"></div>
+                    <label>
+                        <span class="btn btn-primary">
+                            <i class="fa fa-upload"></i>
+                            上传商品图片<input
+                                id="goodsPic"
+                                type="file"
+                                style="display:none"
+                                name="file"
+                                accept="image/jpeg,image/jpg,image/png"
+                            />
+                        </span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>兑换所需积分</label>
+                    <input
+                        id="goodsPoints"
+                        type="number"
+                        class="form-control"
+                        placeholder="兑换所需积分"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>添加数量</label>
+                    <input
+                        id="goodsCount"
+                        type="number"
+                        class="form-control"
+                        placeholder="添加数量"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>商品描述</label>
+                    <textarea
+                        id="goodsDesc"
+                        class="form-control"
+                        rows="3"
+                        placeholder="商品描述"
+                        style="resize:none"
+                    ></textarea>
+                </div>
+
+                <button
+                    type="reset"
+                    onclick="$('.preview').css({background: '',height: ''})"
+                    class="btn btn-default"
+                >
+                    重置
+                </button>
+                <button type="submit" class="btn btn-success">添加</button>
+            </form>
+            <div class="col-lg-4"></div>
+        </div>
+
+        <!-- 引入全局js变量 -->
+        <script src="../js/global.js"></script>
+        <script>
+            $(function($) {
+                var goodPic
+                // 图片上传start
+                $('#goodsPic').change(function() {
+                    $('.preview').css('backgroundImage', '')
+                    // 检查文件是否选择
+                    if (!this.value) {
+                        //清空预览
+                        $('.preview').css({
+                            background: '',
+                            height: ''
+                        })
+                        return
+                    }
+                    // 获取file引用
+                    var file = this.files[0]
+                    if (
+                        file.type !== 'image/jpeg' &&
+                        file.type !== 'image/jpg' &&
+                        file.type !== 'image/png'
+                    ) {
+                        alert('图片格式无效')
+                        return
+                    }
+                    if (file.size > 1024 * 1024 * 2) {
+                        //图片大小超过2M
+                        alert('图片大小不能超过2M')
+                        return
+                    }
+
+                    // 读取文件
+                    var reader = new FileReader()
+                    reader.readAsDataURL(file)
+                    reader.onload = function(e) {
+                        var data = e.target.result // 'data:image/jpeg;base64,/9j/4AAQSk...(base64编码)...'
+                        $('.preview').css({
+                            height: '200px',
+                            marginTop: '10px',
+                            marginBottom: '10px',
+                            border: '1px solid #CCCCCC',
+                            borderRadius: '5px',
+                            background: 'url(' + data + ') no-repeat center',
+                            backgroundSize: 'contain'
+                        })
+
+                        // FileReader对象的图片封装
+                        goodPic = new FormData()
+                        goodPic.append('file', file)
+                        goodPic.append('fileName', file.name)
+                        goodPic.append('hasFile', file.name)
+                        console.log(goodPic.getAll('file'))
+                    }
+                }) // 图片上传end
+
+                //表单提交start
+                $('#addGoods').submit(function() {
+                    var goodName = $('#goodsName').val()
+                    var goodPoint = $('#goodsPoints').val()
+                    var goodCount = $('#goodsCount').val()
+                    var goodDesc = $('#goodsDesc').val()
+                    var hasFile = $('#goodsPic').val() !== ''
+                    console.log(
+                        goodName,
+                        hasFile,
+                        goodPoint,
+                        goodCount,
+                        goodDesc
+                    )
+                    // console.log(goodPic.get("fileName"));
+                    console.log('提交动作')
+
+                    // 简单的表单验证
+                    // if (goodName == '' || goodPoint == '' || goodCount == '' || goodDesc == '' || !hasFile) {
+                    //     alert("请填写完整表单后再提交！");
+                    //     return
+                    // } else if (isExist()) {
+
+                    // }
+
+                    $.ajax({
+                        async: false,
+                        url: rootPath + '/schedule',
+                        type: 'post',
+                        dataType: 'json',
+                        data: {
+                            // scheduleName: "测试",
+                            // scheduleAddr: "测试",
+                            // scheduleTime: "测试"
+                            goodName: goodName,
+                            goodPic: goodPic,
+                            goodPoints: goodsPoints,
+                            goodCount: goodsCount,
+                            goodDesc: goodsDesc
+                        },
+                        processData: false, // 不处理发送的数据
+                        contentType: false, // 不设置Content-Type请求头
+                        success: function(result) {
+                            if (result.code == 200) {
+                                console.log('表单已提交')
+                                alert('表单已提交')
+                            } else {
+                                console.log('表单未成功提交')
+                                alert('表单未成功提交')
+                            }
+                        },
+                        complete: function() {
+                            console.log('请求完成')
+                        }
+                    })
+                }) //表单提交end
+
+                //检查数据是否已存在
+                function isExist() {
+                    flag = true
+                }
+            })
+        </script>
+    </body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <!-- 本地引用jq -->
+        <script src="../plugin/jquery-2.1.4/jquery.min.js"></script>
+
+        <!-- 本地引用bootstrap -->
+        <script src="../plugin/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="../plugin/bootstrap-3.3.7-dist/css/bootstrap.min.css"
+        />
+
+        <!-- 本地引用自定义js模块 -->
+        <link rel="stylesheet" href="../plugin/sb-admin-2/sb-admin-2.css" />
+
+        <!-- 本地引用Font Awesome字体图标 -->
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="../plugin/font-awesome/css/font-awesome.min.css"
+        />
+    </head>
+    <body>
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">首页</h1>
+                <div class="panel-body">
+                    <div class="alert alert-success">
+                        <h3>
+                            <span>欢迎您！</span>
+                            <label id="userName" for=""></label>
+                        </h3>
+                        <h4>
+                            <span>您上次的登录时间是：</span>
+                            <label id="lastTime" for=""></label>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-users fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">26</div>
+                                <div>会员总数</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#">
+                        <div class="panel-footer">
+                            <span class="pull-left">查看详情</span>
+                            <span class="pull-right"
+                                ><i class="fa fa-arrow-circle-right"></i
+                            ></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-green">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-home fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">12</div>
+                                <div>总住宿次数</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#">
+                        <div class="panel-footer">
+                            <span class="pull-left">查看详情</span>
+                            <span class="pull-right"
+                                ><i class="fa fa-arrow-circle-right"></i
+                            ></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-yellow">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-shopping-cart fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">124</div>
+                                <div>总商品消费次数</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#">
+                        <div class="panel-footer">
+                            <span class="pull-left">查看详情</span>
+                            <span class="pull-right"
+                                ><i class="fa fa-arrow-circle-right"></i
+                            ></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-red">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-smile-o fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">13</div>
+                                <div>总服务次数</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#">
+                        <div class="panel-footer">
+                            <span class="pull-left">查看详情</span>
+                            <span class="pull-right"
+                                ><i class="fa fa-arrow-circle-right"></i
+                            ></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <script src="../js/global.js"></script>
+        <script>
+            $(function() {
+                $.ajax({
+                    url: rootPath + '/manager/info',
+                    type: 'GET',
+                    dataType: 'JSON',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function(result) {
+                        if (result.code == 200) {
+                            console.log(result)
+                            $('#userName').text(result.data.managerUsername)
+                            $('#lastTime').text(result.data.managerLastTime)
+                        } else {
+                            alert(result.msg)
+                        }
+                    }
+                })
+            })
+        </script>
+    </body>
+</html>

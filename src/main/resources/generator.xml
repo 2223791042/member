@@ -39,7 +39,12 @@
         </javaClientGenerator>
 
         <!-- 指定Table的生成策略 -->
+        <!--<table tableName="points_exchange_record" domainObjectName="ExchangeRecord"></table>-->
         <table tableName="card" domainObjectName="Card"></table>
+        <!--<table tableName="goods" domainObjectName="Goods"></table>-->
+        <!--<table tableName="member" domainObjectName="Member"></table>-->
+        <!--<table tableName="chargeinfo" domainObjectName="Chargeinfo"></table>-->
+        <table tableName="payinfo" domainObjectName="Payinfo"></table>
 
     </context>
 </generatorConfiguration>

@@ -13,9 +13,7 @@ import java.util.Map;
 public interface PayinfoService {
     void savePayInfo(Payinfo payInfo);
 
-    void addPayinfo(Payinfo payinfo);
-
-    Map<String, Object> getPayinfoList(Integer payKind, String memberPhone, String memberName, Date startTime, Date endTime, String memberHandler);
+    Map<String, Object> getPayinfoList(int payKind, String memberPhone, Date startTime, Date endTime);
 
     List<Member> payinfoSearchByPhone(String memberPhone);
 

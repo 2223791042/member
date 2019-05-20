@@ -5,9 +5,12 @@ import com.github.pagehelper.PageInfo;
 import guet.ty.member.VO.ResultVO;
 import guet.ty.member.VO.TableVO;
 import guet.ty.member.dto.PayinfoDTO;
+import guet.ty.member.entity.Card;
 import guet.ty.member.entity.Manager;
 import guet.ty.member.entity.Member;
 import guet.ty.member.entity.Payinfo;
+import guet.ty.member.service.CardService;
+import guet.ty.member.service.MemberService;
 import guet.ty.member.service.PayinfoService;
 import guet.ty.member.utils.DateUtil;
 import guet.ty.member.utils.ResultVOUtil;
@@ -20,8 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +33,12 @@ public class PayinfoController {
     @Autowired
     private PayinfoService payinfoService;
 
+    @Autowired
+    private MemberService memberService;
+
+    @Autowired
+    private CardService cardService;
+
     @PostMapping("/payinfo")
     public ResultVO payinfoAdd(HttpSession httpSession, HttpServletRequest request) {
         //获取手机号查询
@@ -37,7 +46,6 @@ public class PayinfoController {
         //获取当前管理员信息
         Manager manager = (Manager) httpSession.getAttribute("manager");
         //获取消费信息
-        Integer payKind= Integer.parseInt(request.getParameter("payKind"));
         String payDesc= request.getParameter("payDesc");
         BigDecimal payMoney=BigDecimal.valueOf(Long.parseLong(request.getParameter("payMoney")));
         Integer payMethod=Integer.parseInt(request.getParameter("payMethod"));
@@ -46,16 +54,13 @@ public class PayinfoController {
         //生成消费信息
         Payinfo payinfo = new Payinfo();
         payinfo.setPayCardId(phone);
-        payinfo.setPayKind(payKind);
         payinfo.setPayDesc(payDesc);
         payinfo.setPayMoney(payMoney);
         payinfo.setPayMethod(payMethod);
         payinfo.setPayTime(new Date());
         payinfo.setPayHandler(manager.getManagerName());
-
-        payinfoService.payinfoSearchByPhone(memberPhone);
         try {
-            payinfoService.addPayinfo(payinfo);
+            payinfoService.savePayInfo(payinfo);
             return ResultVOUtil.success();
         } catch (Exception e) {
             return ResultVOUtil.fail();
@@ -63,8 +68,18 @@ public class PayinfoController {
 
     }
 
+    @GetMapping("/memberInfo/{cardId}")
+    public ResultVO memberInfo(@PathVariable("cardId") String cardId){
+        Member member = memberService.getMember(cardId);
+        Card card = cardService.getCard(cardId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("member", member);
+        map.put("card", card);
+        return ResultVOUtil.success("查询成功", map);
+    }
+
     @GetMapping("/payinfoSearch")
-    public TableVO<Member> memberSearch( HttpSession httpSession, HttpServletRequest request) {
+    public TableVO<Member> payinfoSearch(HttpServletRequest request) {
         //获取当前管理员信息
         String memberPhone=request.getParameter("memberPhone");
         List<Member> payinfoDTOList=payinfoService.payinfoSearchByPhone(memberPhone);
@@ -76,19 +91,14 @@ public class PayinfoController {
     public TableVO<PayinfoDTO> payinfoList(int page, int limit,int payKind, HttpServletRequest request, HttpSession httpSession){
         //开启分页查询
         PageHelper.startPage(page, limit);
-
-        //用户名
-        String memberName = request.getParameter("memberName");
         //用户id
         String memberPhone = request.getParameter("memberId");
         //消费时间
         Date startTime = DateUtil.getStart(request);
         Date endTime = DateUtil.getEnd(request);
-        //处理者
-        String memberHandler = request.getParameter("memberHandler");
-        Map<String,Object> map= payinfoService.getPayinfoList(payKind, memberPhone, memberName, startTime, endTime, memberHandler);
-        List<PayinfoDTO> payinfoDTOList=(List<PayinfoDTO>)map.get("PayinfoList");
-        PageInfo pageInfo=(PageInfo)map.get("pageInfo") ;
+        Map<String,Object> map= payinfoService.getPayinfoList(payKind, memberPhone, startTime, endTime);
+        List<PayinfoDTO> payinfoDTOList=(List<PayinfoDTO>) map.get("payinfoDTOList");
+        PageInfo pageInfo= (PageInfo) map.get("pageInfo") ;
         return new TableVO<>(pageInfo,payinfoDTOList);
     }
 

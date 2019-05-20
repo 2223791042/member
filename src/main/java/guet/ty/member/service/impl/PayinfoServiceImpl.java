@@ -28,88 +28,57 @@ public class PayinfoServiceImpl implements PayinfoService {
     @Transactional
     @Override
     public void savePayInfo(Payinfo payInfo) {
-        payInfo.setPayTime(new Date());
-        payinfoMapper.insert(payInfo);
-        Card card=cardMapper.selectByPrimaryKey(payInfo.getPayCardId()+"");
-        card.setCardPayTimes(card.getCardPayTimes()+1);
-        card.setCardPayMoney(card.getCardPayMoney().add(payInfo.getPayMoney()));
-        card.setCardPoints(card.getCardPoints().add(payInfo.getPayMoney()));
-        cardMapper.updateByPrimaryKey(card);
+        payinfoMapper.insertSelective(payInfo);
+        Card saveCard = cardMapper.selectByPrimaryKey(payInfo.getPayCardId().toString());
+        if (payInfo.getPayMethod() == 0){
+            saveCard.setCardBalance(saveCard.getCardBalance().subtract(payInfo.getPayMoney()));
+        }
+        saveCard.setCardPayTimes(saveCard.getCardPayTimes() + 1);
+        saveCard.setCardPayMoney(saveCard.getCardPayMoney().add(payInfo.getPayMoney()));
+        saveCard.setCardPoints(saveCard.getCardPoints().add(payInfo.getPayMoney()));
+        cardMapper.updateByPrimaryKeySelective(saveCard);
     }
 
-    @Transactional
-    @Override
-    public void addPayinfo(Payinfo payinfo) {
-        payinfoMapper.insertSelective(payinfo);
-    }
 
     @Override
-    public Map<String, Object> getPayinfoList(Integer payKind, String memberPhone, String memberName, Date startTime, Date endTime, String memberHandler) {
-        List<PayinfoDTO> PayinfoList = new ArrayList();
+    public Map<String, Object> getPayinfoList(int payKind, String memberPhone, Date startTime, Date endTime) {
         PayinfoExample payinfoExample = new PayinfoExample();
-        PayinfoExample.Criteria criteria = payinfoExample.createCriteria();
-        criteria.andPayKindEqualTo(payKind);
-
-        //根据会员手机查询
-        if (memberPhone != null && !memberPhone.trim().equals("")) {
-            MemberExample memberExample1 = new MemberExample();
-            MemberExample.Criteria memCriteria1 = memberExample1.createCriteria();
-            memCriteria1.andMemberPhoneEqualTo(memberPhone);
-            List<Member> members = memberMapper.selectByExample(memberExample1);
-            for (Member member : members) {
-                criteria.andPayCardIdEqualTo(Long.parseLong(member.getMemberPhone()));
-
-            }
+        PayinfoExample.Criteria payinfoCriteria = payinfoExample.createCriteria();
+        payinfoCriteria.andPayKindEqualTo(payKind);
+        if (memberPhone != null && !memberPhone.trim().equals("")){
+            payinfoCriteria.andPayCardIdEqualTo(Long.parseLong(memberPhone));
         }
-
-        //根据会员姓名模糊查询
-        if (memberName != null && !memberName.trim().equals("")) {
-            MemberExample memberExample1 = new MemberExample();
-            MemberExample.Criteria memCriteria1 = memberExample1.createCriteria();
-            memCriteria1.andMemberNameEqualTo(memberName);
-            List<Member> members = memberMapper.selectByExample(memberExample1);
-            for (Member member : members) {
-                criteria.andPayCardIdEqualTo(Long.parseLong(member.getMemberPhone()));
-            }
+        if (startTime != null){
+            payinfoCriteria.andPayTimeGreaterThanOrEqualTo(startTime);
         }
-
-        //根据消费时间查询
-        /*if (payinfoTime != null) {
-            criteria.andPayTimeEqualTo(payinfoTime);
-
-        }*/
-
-        if (startTime != null){  //>=
-            criteria.andPayTimeGreaterThanOrEqualTo(startTime);
+        if (endTime != null){
+            payinfoCriteria.andPayTimeLessThanOrEqualTo(endTime);
         }
-        if (endTime != null){ //<=
-            criteria.andPayTimeLessThanOrEqualTo(endTime);
-        }
-
-        List<Payinfo> payinfos= payinfoMapper.selectByExample(payinfoExample);
-
-        for (Payinfo payinfo : payinfos) {
-            MemberExample example = new MemberExample();
-            MemberExample.Criteria memberCriteria = example.createCriteria();
-            memberCriteria.andMemberPhoneEqualTo(payinfo.getPayCardId().toString());
-            List<Member> memberList = memberMapper.selectByExample(example);
+        List<Payinfo> payinfoList = payinfoMapper.selectByExample(payinfoExample);
+        PageInfo<Payinfo> pageInfo = new PageInfo<>(payinfoList);
+        Map<String, Object> map = new HashMap<>();
+        map.put("pageInfo", pageInfo);
+        List<PayinfoDTO> payinfoDTOList = new ArrayList<>();
+        for (Payinfo payinfo : payinfoList){
             PayinfoDTO payinfoDTO = new PayinfoDTO();
-            payinfoDTO.setCardId(String.valueOf(payinfo.getPayCardId()));
-            if (memberList.size() != 0){
-                payinfoDTO.setMemberName(memberList.get(0).getMemberName());
-                payinfoDTO.setMemberGrade(memberList.get(0).getMemberGrade());
-            }
+            Card card = cardMapper.selectByPrimaryKey(payinfo.getPayCardId().toString());
+            MemberExample memberExample = new MemberExample();
+            MemberExample.Criteria criteria = memberExample.createCriteria();
+            criteria.andMemberPhoneEqualTo(card.getCardId());
+            List<Member> memberList = memberMapper.selectByExample(memberExample);
+            Member member = memberList.get(0);
+            payinfoDTO.setCardId(payinfo.getPayCardId().toString());
+            payinfoDTO.setMemberGrade(card.getCardGrade());
+            payinfoDTO.setPayDesc(payinfo.getPayDesc());
+            payinfoDTO.setPayHandler(payinfo.getPayHandler());
+            payinfoDTO.setMemberName(member.getMemberName());
             payinfoDTO.setPayKind(payinfo.getPayKind());
             payinfoDTO.setPayMoney(payinfo.getPayMoney());
             payinfoDTO.setPayMethod(payinfo.getPayMethod());
             payinfoDTO.setPayTime(payinfo.getPayTime());
-            payinfoDTO.setPayHandler(payinfo.getPayHandler());
-            PayinfoList.add(payinfoDTO);
+            payinfoDTOList.add(payinfoDTO);
         }
-        PageInfo pageInfo=new PageInfo<>(payinfos);
-        Map<String,Object> map=new HashMap<>();
-        map.put("PayinfoList",PayinfoList);
-        map.put("pageInfo",pageInfo);
+        map.put("payinfoDTOList", payinfoDTOList);
         return map;
     }
 
@@ -129,25 +98,5 @@ public class PayinfoServiceImpl implements PayinfoService {
         MemberExample.Criteria memCriteria1 = memberExample1.createCriteria();
         memCriteria1.andMemberPhoneEqualTo(memberPhone);
         return memberMapper.selectByExample(memberExample1);
-        /*List<PayinfoDTO> PayinfoList = new ArrayList();
-        List<Payinfo> payinfoList = getMember(memberPhone);
-        for(Payinfo payinfo:payinfoList) {
-            MemberExample memberExample1 = new MemberExample();
-            MemberExample.Criteria memCriteria1 = memberExample1.createCriteria();
-            memCriteria1.andMemberPhoneEqualTo(memberPhone);
-
-            PayinfoDTO payinfoDTO = new PayinfoDTO();
-            payinfoDTO.setCardId(String.valueOf(payinfo.getPayCardId()));
-            payinfoDTO.setMemberName(memberMapper.selectByExample(memberExample1).get(0).getMemberName());
-            payinfoDTO.setMemberGrade(memberMapper.selectByExample(memberExample1).get(0).getMemberGrade());
-            payinfoDTO.setPayKind(payinfo.getPayKind());
-            payinfoDTO.setPayMoney(payinfo.getPayMoney());
-            payinfoDTO.setPayMethod(payinfo.getPayMethod());
-            payinfoDTO.setPayTime(payinfo.getPayTime());
-            payinfoDTO.setPayHandler(payinfo.getPayHandler());
-
-            PayinfoList.add(payinfoDTO);
-        }
-        return PayinfoList;*/
     }
 }

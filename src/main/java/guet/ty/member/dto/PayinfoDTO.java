@@ -20,6 +20,16 @@ public class PayinfoDTO {
 
     private String payHandler;
 
+    private String payDesc;
+
+    public String getPayDesc() {
+        return payDesc;
+    }
+
+    public void setPayDesc(String payDesc) {
+        this.payDesc = payDesc;
+    }
+
     public String getMemberName() {
         return memberName;
     }
